@@ -19,4 +19,19 @@ export default defineConfig({
 			targets: ["defaults", "not IE 11"],
 		}),
 	],
+	build: {
+		target: "esnext",
+		minify: "esbuild",
+		sourcemap: false,
+		reportCompressedSize: false,
+		rollupOptions: {
+			output: {
+				manualChunks: (id) => {
+					if (id.includes("node_modules")) {
+						return id.split("node_modules/")[1].split("/")[0];
+					}
+				},
+			},
+		},
+	},
 });
