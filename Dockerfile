@@ -6,7 +6,11 @@ COPY package.json package-lock.json ./
 
 RUN npm ci --prefer-offline
 COPY . .
+
 RUN npm run build
+
+ARG VITE_APP_VERSION
+ENV VITE_APP_VERSION=$VITE_APP_VERSION
 
 FROM node:22-alpine
 WORKDIR /app
