@@ -7,26 +7,23 @@ COPY package.json package-lock.json ./
 RUN npm ci --prefer-offline
 COPY . .
 
-RUN npm run build
-
 ARG VITE_APP_VERSION
 ENV VITE_APP_VERSION=$VITE_APP_VERSION
 
-FROM node:22-alpine
-WORKDIR /app
-RUN npm install -g serve
-COPY --from=builder /app/dist ./dist
+RUN npm run build
 
+#Production
+FROM nginx:1.25-alpine
 
-FROM nginxinc/nginx-unprivileged:alpine3.22 AS runner
-
-USER nginx
+RUN apk add --no-cache curl
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
-COPY --chown=nginx:nginx  --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost/ || exit 1
 
-ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]
-CMD ["-g", "daemon off;"]
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
