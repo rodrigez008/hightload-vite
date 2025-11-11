@@ -8,7 +8,12 @@
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
 		"preview": "vite preview",
-		"prepare": "husky"
+		"check:precommit": "lint-staged"
+	},
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx}": [
+			"npm run lint"
+		]
 	},
 	"dependencies": {
 		"react": "^19.1.1",
@@ -27,6 +32,7 @@
 		"eslint-plugin-react-refresh": "^0.4.22",
 		"globals": "^16.4.0",
 		"husky": "^9.1.7",
+		"lint-staged": "^16.2.6",
 		"sass-embedded": "^1.93.3",
 		"typescript": "~5.9.3",
 		"typescript-eslint": "^8.45.0",
